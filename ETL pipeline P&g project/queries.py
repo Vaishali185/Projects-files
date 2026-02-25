@@ -54,76 +54,42 @@ EXTRACT_LINE_STATE = """
     AND l.line in {}
 """
 
-CREATE_BOX_REJECTS = """
+CREATE_BAG_REJECTS_TMP = """
+
 drop table if exists {};
 
 create table {}(
-    [datetime] [datetime] NOT NULL,
+	[line_state_id] [nvarchar](40) NOT NULL,
+	[site_id] [int] NOT NULL,
+	[line_id] [int] NOT NULL,
+	[datetime] [datetime] NOT NULL,
+	[reject_type] [nvarchar](40) NOT NULL,
+	[machine_speed] [int] NOT NULL,
     [agile_flag] [int] NOT NULL,
-    [recipe_id] [int] NOT NULL,
-    [line_state_id] [nvarchar](40) NOT NULL,
-    [start_time] [datetime] NULL,
-    [rejects_qty] [int] NULL,
-    [line_id] [int] NOT NULL,
-    [site_id] [int] NOT NULL,
-    [reject_cause_id] [int] NOT NULL
+    [project_flag] [int] NOT NULL,
+	[start_time] [datetime] NULL,
+	[rejects_qty] [int] NULL
 );
 """
 
+CREATE_BAG_TOTALS_TMP = """
 
-CREATE_BOX_REJECTS_CAUSE_DIM = """
 drop table if exists {};
 
 create table {}(
-    [reject_cause_id] [int] IDENTITY(1,1) PRIMARY KEY,
-    [tag_nm] [nvarchar](150) NOT NULL,
-    [cause] [nvarchar](100) NULL,
-    [reason] [nvarchar](40) NULL,
-    [station] [nvarchar](100) NOT NULL,
-    [type] [nvarchar](40) NOT NULL,
-    [machine] [nvarchar](40) NOT NULL
-    
-);
-"""
-
-
-CREATE_BOX_LINE_RECIPE_DIM = """
-drop table if exists {};
-
-create table {}(
-    [line_recipe_id] [int]  PRIMARY KEY,
-    [product_segment] [nvarchar](100) NOT NULL,
-    [recipe_size_nm] [nvarchar](40) NOT NULL,
-    [recipe_cd] [nvarchar](40) NOT NULL,
-    [n_boxes_per_case] [int] NOT NULL,
-    
-    
-    
-);
-"""
-
-CREATE_BOX_TOTALS = """
-drop table if exists {};
-
-create table {}(
-       [site_id] [int] NOT NULL,
-       [line_id] [int] NOT NULL, 
-       [datetime] [datetime] NOT NULL, 
-       [recipe_id] [int] NOT NULL,
-       [agile_flag] [int] NOT NULL,
-       [line_state_id] [nvarchar](40) NOT NULL,
-       [Base_Machine_ExtractedCartons_0_Counter_Actual_n] [int] NULL,
-       [Base_Machine_ProducedBases_0_Counter_Actual_n] [int] NULL,
-       [Cover_General_ExtractedCartons_Total_Counter_Actual_n] [int] NULL,
-       [Cover_General_ProducedCovers_Total_Counter_Actual_n] [int] NULL,
-       [Base_Machine_RejectedBases_Station1_Counter_Actual_n] [int] NULL,
-       [Base_Machine_RejectedBases_Station2_Counter_Actual_n] [int] NULL,
-       [Base_Machine_RejectedBases_Station3_Counter_Actual_n] [int] NULL,
-       [Base_Machine_RejectedBases_Total_NOT_Extracted_Betw_Holders_n] [int] NULL,
-       [Cover_General_RejectedCovers_0_Counter_Actual_n] [int] NULL,
-       [UPack_For_Proficy_Produced_Cases] [int] NULL,
-       [start_time] [datetime] NULL
-
+	[line_state_id] [nvarchar](40) NOT NULL,
+	[site_id] [int] NOT NULL,
+	[line_id] [int] NOT NULL,
+	[datetime] [datetime] NOT NULL,
+	[machine_speed] [int] NOT NULL,
+    [agile_flag] [int] NOT NULL,
+    [project_flag] [int] NOT NULL,
+	[start_time] [datetime] NULL,
+	[Good_Bag_Total] [int] NULL,
+	[Reject_Bag_Total] [int] NULL,
+	[Changeover_Reject_Total] [int] NULL,
+	[Camera_DS_Reject_Total] [int] NULL,
+	[Camera_US_Reject_Total] [int] NULL
 );
 """
 
@@ -132,11 +98,11 @@ TRUNCATE_TAG_LIST_TABLE = """
     where Site = '{}' and ToolName='{}'
 """
 
-
 TRUNCATE_REJECTS_TABLE = """ 
     delete from {}
     where site_id = {} and datetime >= '{}'
 """
+
 
 # COMMON
 DB_DELETE_ROWS_WHERE_ONE_COLUMN = """

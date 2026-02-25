@@ -1,0 +1,318 @@
+# TOML document for Bag tool ETL
+
+[job]
+  id = 2
+  name = "bag_tool_etl"
+  path_to_logs='F:\Ecosystem Non-OneDrive\Development Area\MVP046 SUD Bag Tool\Logs'
+  job_summary_table_nm='SUD_ETL_RUN_SUMMARY'
+  path_to_tag_list='F:\Ecosystem Non-OneDrive\Development Area\MVP046 SUD Bag Tool\Data\Input\tags_list.xlsx'
+
+[datalab_db]
+  [datalab_db.connection]
+    server_name="azpg-sqlserver-fhcenganalyticsdatalab.database.windows.net"
+    db_name="DatalabDB"
+    driver="ODBC Driver 17 for SQL Server"
+    with_token=true
+
+  [datalab_db.access_token_url]
+    access_token_url = "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://database.windows.net/"
+  
+  [datalab_db.output_tables]
+    pack_rejects_table_nm="SUD_BAGGER_REJECTS"
+    pack_production_table_nm="SUD_BAGGER_TOTALS"
+    tag_table="SUD_PBI_TOOL_TAGS"
+    pack_rejects_agg_freq="10min"
+    pack_prod_agg_freq="30min"
+
+[powerbi]
+api_url="https://prod-03.eastus2.logic.azure.com:443/workflows/800379cca8ee45709ef0bc919c011164/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=8tn-GbpctfJOU_BvWMidsjFlmdbLo3F3NxLkq3Du2vI"
+app_name="SUD_Bag_Tool"
+
+
+[sites]
+
+	[sites.ami]
+	site_name="Amiens"
+  enabled=true
+  agile_enabled=true
+  project_enabled=true
+  job_id_offset = 2
+  history_buffer_days = 3
+
+    [sites.ami.lines]
+      lines=['L28A', 'L28B', 'L28G', 'L36A', 'L36B']
+      lines_dim=['LINE 28A', 'LINE 28B', 'LINE 28G', 'LINE 36A', 'LINE 36B']
+      lines_agile=['L28']
+
+    [sites.ami.tags]
+      tags_index=['Mespack_Machine_Speed']
+      tags_agile=['Agile_Packing_On']
+      tags_projects=['Mespack_Project_Testing']
+      
+		[sites.ami.servers]
+		timezone="Europe/Berlin"
+		dttm_format="%Y-%m-%d %H:%M:%S"
+
+    [sites.ami.servers.mes]
+      source = "maple"
+    
+      [sites.ami.servers.mes.maple]
+        server_name="ami-maple012.eu.pg.com"
+        db_name="MES"
+        driver="ODBC Driver 13 for SQL Server"
+        trusted="yes"
+
+      [sites.ami.servers.mes.iods]
+			  server_name=""
+
+    [sites.ami.servers.historian]
+      source="proficy"
+      history_depth_days=7
+
+      [sites.ami.servers.historian.wonderware]
+
+        [sites.ami.servers.historian.wonderware.pack]
+          server_name="137.176.212.44"
+          db_name="Runtime"
+          driver="SQL Server"
+          username='wwUser' 
+          password='wwUser'
+          trusted="no"
+        
+        [sites.ami.servers.historian.wonderware.conv]
+          server_name="137.176.212.43"
+          db_name="Runtime"
+          driver="SQL Server"
+          username='wwUser'
+          password='wwUser'
+          trusted="no"
+
+      [sites.ami.servers.historian.proficy]
+        server_name="AMI-MESHISTHHC.na.pg.com"
+        port="443"
+        topic="AMI-PACK"
+
+  [sites.lim]
+	site_name="Lima"
+  enabled=true
+  agile_enabled=false
+  project_enabled=false
+  job_id_offset = 1
+  history_buffer_days = 3
+
+    [sites.lim.lines]
+      lines=['L225', 'L226', 'L255', 'L256', 'L265', 'L266']
+      lines_dim = ['Line 225', 'Line 226', 'Line 255', 'Line 256', 'Line 265', 'Line 266']
+      lines_agile=[]
+
+    [sites.lim.tags]
+      tags_index=['Mespack_Machine_Speed']
+      tags_agile=['Agile_Packing_On']
+      tags_projects=['Mespack_Project_Testing']
+      
+		[sites.lim.servers]
+		timezone="America/New_York"
+		dttm_format="%Y-%m-%d %H:%M:%S"
+
+    [sites.lim.servers.mes]
+      source = "iods"
+    
+      [sites.lim.servers.mes.maple]
+        server_name="lm-suddb001.na.pg.com"
+        db_name="LSUD"
+        driver="ODBC Driver 13 for SQL Server"
+        trusted="yes"
+
+      [sites.lim.servers.mes.iods]
+			  server_name="lm-mesrptfhc2.na.pg.com"
+
+    [sites.lim.servers.historian]
+      source="proficy"
+      history_depth_days=7
+
+      [sites.lim.servers.historian.wonderware]
+
+        [sites.lim.servers.historian.wonderware.pack]
+          server_name="137.176.82.16"
+          db_name="Runtime"
+          driver="SQL Server"
+          username='wwUser' 
+          password='wwUser'
+          trusted="no"
+        
+        [sites.lim.servers.historian.wonderware.conv]
+          server_name="137.176.82.16"
+          db_name="Runtime"
+          driver="SQL Server"
+          username='wwUser'
+          password='wwUser'
+          trusted="no"
+
+      [sites.lim.servers.historian.proficy]
+        server_name="lm-mdchistsud.na.pg.com"
+        port="443"
+        topic="LIM-PACK"
+
+  [sites.alx]
+	site_name="Alex"
+  enabled=true
+  agile_enabled=false
+  project_enabled=false
+  job_id_offset = 4
+  history_buffer_days = 3
+
+    [sites.alx.lines]
+      lines= ['L65', 'L66', 'L55', 'L56']
+      lines_dim= ['LINE 65', 'LINE 66', 'LINE 55', 'LINE 56']
+      lines_agile=[]
+
+    [sites.alx.tags]
+      tags_index=['Mespack_Machine_Speed']
+      tags_agile=['Agile_Packing_On']
+      tags_projects=['Mespack_Project_Testing']
+      
+		[sites.alx.servers]
+		timezone="America/Chicago"
+		dttm_format="%Y-%m-%d %H:%M:%S"
+
+    [sites.alx.servers.mes]
+      source = "iods"
+    
+      [sites.alx.servers.mes.maple]
+        server_name="alx-engcsrv116"
+        db_name="LSUD"
+        driver="ODBC Driver 13 for SQL Server"
+        trusted="yes"
+
+      [sites.alx.servers.mes.iods]
+			  server_name="alx-mesrptfhc.na.pg.com"
+
+    [sites.alx.servers.historian]
+      source="proficy"
+      history_depth_days=7
+
+      [sites.alx.servers.historian.wonderware]
+
+        [sites.alx.servers.historian.wonderware.pack]
+          server_name="ALX-SUDHIST01.na.pg.com"
+          db_name="Runtime"
+          driver="SQL Server"
+          username='wwUser' 
+          password='wwUser'
+          trusted="no"
+        
+        [sites.alx.servers.historian.wonderware.conv]
+          server_name="ALX-SUDHIST01.na.pg.com"
+          db_name="Runtime"
+          driver="SQL Server"
+          username='wwUser'
+          password='wwUser'
+          trusted="no"
+
+      [sites.alx.servers.historian.proficy]
+        server_name="alx-mdchistsud.na.pg.com"
+        port="443"
+        topic="ALX-PACK"
+  
+  [sites.url]
+	site_name="Urlati"
+  enabled=true
+  agile_enabled=false
+  project_enabled=false
+  job_id_offset = 3
+  history_buffer_days = 3
+
+    [sites.url.lines]
+      lines= ['L10A', 'L10B']
+      lines_dim= ['SUWJ-103', 'SUWJ-104']
+      lines_agile=[]
+
+    [sites.url.tags]
+      tags_index=['Mespack_Machine_Speed']
+      tags_agile=['Agile_Packing_On']
+      tags_projects=['Mespack_Project_Testing']
+      
+		[sites.url.servers]
+		timezone="Europe/Bucharest"
+		dttm_format="%Y-%m-%d %H:%M:%S"
+
+    [sites.url.servers.mes]
+      source = "iods"
+    
+      [sites.url.servers.mes.maple]
+        server_name=""
+
+      [sites.url.servers.mes.iods]
+			  server_name="url-prof-app"
+
+    [sites.url.servers.historian]
+      source="proficy"
+      history_depth_days=7
+
+      [sites.url.servers.historian.wonderware]
+
+        [sites.url.servers.historian.wonderware.pack]
+          server_name=""
+        
+        [sites.url.servers.historian.wonderware.conv]
+          server_name=""
+
+      [sites.url.servers.historian.proficy]
+        server_name="url-suddgtbkbn.na.pg.com"
+        port="443"
+        topic="URL-PACK"
+
+
+  [sites.tak]
+	site_name="Takasaki"
+  enabled=true
+  agile_enabled=false
+  project_enabled=false
+  job_id_offset = 3
+  history_buffer_days = 3
+
+    [sites.tak.lines]
+    
+        
+      
+      lines= ['L113', 'L114', 'L215','L314','L316']
+      lines_dim= [ 'L113', 'L114','SUTK-025','SUTK-027','SUTK-034']
+      lines_agile=[]
+
+    [sites.tak.tags]
+      tags_index=['Mespack_Machine_Speed']
+      tags_agile=['Agile_Packing_On']
+      tags_projects=['Mespack_Project_Testing']
+      
+		[sites.tak.servers]
+        timezone="Asia/Tokyo"
+		dttm_format="%Y-%m-%d %H:%M:%S"
+
+    [sites.tak.servers.mes]
+      source = "iods"
+    
+      [sites.tak.servers.mes.maple]
+        server_name=""
+
+      [sites.tak.servers.mes.iods]
+			  server_name="takf-prof-rpt.na.pg.com"
+
+    [sites.tak.servers.historian]
+      source="proficy"
+      history_depth_days=7
+
+      [sites.tak.servers.historian.wonderware]
+
+        [sites.tak.servers.historian.wonderware.pack]
+          server_name=""
+        
+        [sites.tak.servers.historian.wonderware.conv]
+          server_name=""
+
+      [sites.tak.servers.historian.proficy]
+        server_name="takf-sudhist01.na.pg.com"
+        port="443"
+        topic="TAKF-PACKING"
+
+
+
